@@ -67,15 +67,15 @@ namespace Work_System_Csharp_Winform
             int firstNum = 0;
             int secNum = 1;
             int tmp;
-            textBox1.Text += "0 1 ";
+            textBox2.Text += "0 1 ";
             while (!stopFibonachi)
             {
-                textBox1.Text += (firstNum + secNum);
+                textBox2.Text += (firstNum + secNum) + " ";
                 tmp = secNum;
                 secNum += firstNum;
                 firstNum = tmp;
                 Thread.Sleep(200);
-                while (pauseFibonachi && !stopSimple) { }
+                while (pauseFibonachi && !stopFibonachi) { }
             }
             MessageBox.Show("Thread Fibonachi stopped");
         }
@@ -97,6 +97,7 @@ namespace Work_System_Csharp_Winform
         private void buttonSStop_Click(object sender, EventArgs e)
         {
             stopSimple = true;
+            simple.Join();
         }
 
         private void buttonSResume_Click(object sender, EventArgs e)
@@ -112,8 +113,6 @@ namespace Work_System_Csharp_Winform
                 return;
             }
             stopFibonachi = false;
-            min = Convert.ToInt32(numericUpDown1.Value);
-            max = Convert.ToInt32(numericUpDown2.Value);
             fibonachi = new Thread(GenerateFibonachiNums);
             fibonachi.Start();
         }
@@ -121,6 +120,7 @@ namespace Work_System_Csharp_Winform
         private void buttonFStop_Click(object sender, EventArgs e)
         {
             stopFibonachi = true;
+            fibonachi.Join();
         }
 
         private void buttonFResume_Click(object sender, EventArgs e)
@@ -130,10 +130,16 @@ namespace Work_System_Csharp_Winform
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            stopSimple = true;
-            stopFibonachi = true;
-            simple.Join();
-            fibonachi.Join();
+            if (simple != null)
+            {
+                stopSimple = true;
+                simple.Join();
+            }
+            if (fibonachi != null)
+            {
+                stopFibonachi = true;
+                fibonachi.Join();
+            }
         }
     }
 }
